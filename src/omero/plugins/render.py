@@ -368,7 +368,7 @@ class RenderControl(BaseControl):
                 self._copy_single(gateway, src_img, target, skipthumbs)
             finally:
                 if close:
-                    src_img._closeRE()
+                    src_img._re.close()
 
     def _copy_single(self, gateway, src_img, target, skipthumbs):
         for targets in self.render_images(gateway, target):
@@ -394,7 +394,7 @@ class RenderControl(BaseControl):
                     self._generate_thumbs(batch.values())
             finally:
                 for target in targets:
-                    target._closeRE()
+                    target._re.close()
 
     def update_channel_names(self, gateway, obj, namedict):
         for targets in self.render_images(gateway, obj):
@@ -488,7 +488,7 @@ class RenderControl(BaseControl):
                                       args.skipthumbs)
                     break
             finally:
-                img._closeRE()
+                img._re.close()
 
         if namedict:
             self._update_channel_names(gateway, iids, namedict)
@@ -503,7 +503,7 @@ class RenderControl(BaseControl):
                 self.test_per_pixel(
                     client, img.getPrimaryPixels().id, args.force, args.thumb)
             finally:
-                img._closeRE()
+                img._re.close()
 
     def test_per_pixel(self, client, pixid, force, thumb):
         fail = {"omero.pixeldata.fail_if_missing": "true"}
