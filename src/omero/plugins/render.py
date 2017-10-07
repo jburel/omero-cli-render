@@ -204,7 +204,7 @@ class RenderObject(object):
 
         self.range = image.getPixelRange()
         self.channels = map(lambda x: ChannelObject(x),
-                            image.getChannels(noRE=True))
+                            image.getChannels())
         self.model = image.isGreyscaleRenderingModel() and \
             'greyscale' or 'color'
         self.projection = image.getProjection()
@@ -243,7 +243,7 @@ class RenderObject(object):
         return d
 
     def close(self):
-        self.image._closeRE()
+        self.image._re.close()
 
 
 class RenderControl(BaseControl):
@@ -351,13 +351,13 @@ class RenderControl(BaseControl):
                     first = False
             finally:
                 ro.close()
-        gateway._assert_unregistered("info")
+        # gateway._assert_unregistered("info")
 
     def copy(self, args):
         client = self.ctx.conn(args)
         gateway = BlitzGateway(client_obj=client)
         self._copy(gateway, args.object, args.target, args.skipthumbs)
-        gateway._assert_unregistered("copy")
+        # gateway._assert_unregistered("copy")
 
     def _copy(self, gateway, obj, target, skipthumbs, close=True):
         """
@@ -493,7 +493,7 @@ class RenderControl(BaseControl):
         if namedict:
             self._update_channel_names(gateway, iids, namedict)
 
-        gateway._assert_unregistered("edit")
+        # gateway._assert_unregistered("edit")
 
     def test(self, args):
         client = self.ctx.conn(args)
