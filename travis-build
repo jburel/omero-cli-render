@@ -4,16 +4,18 @@ set -e
 set -u
 set -x
 
+pip install -e .
+pip install pytest
 python setup.py sdist
 pip install dist/*.tar.gz
 pip install omego
 omego install --managedb --dbhost localhost --dbname omero --prestartfile $HOME/config.omero -v --release 5.4.0 --ice 3.5 --no-web
 
 # Check that the plugin is installed
-OMERO.server/bin/omero render -h
+OMERO.server/bin/omero render -h;
 
 # Run the tests
 VALUE=$(readlink -f OMERO.server)
 cp src/omero/plugins/render.py $VALUE/lib/python/omero/plugins/render.py
 export PYTHONPATH=$VALUE/lib/python:$VALUE/lib/testlib
-python setup.py test -t test/integration/clitest -i $VALUE/etc/ice.config
+python setup.py test -t test/integration/clitest -i $VALUE/etc/ice.config -v
