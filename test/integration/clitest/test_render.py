@@ -24,7 +24,7 @@ import pytest
 
 from omero.plugins.render import RenderControl
 from omero.cli import NonZeroReturnCode
-from test.integration.clitest.cli import CLITest
+from cli import CLITest
 from omero.gateway import BlitzGateway
 
 
