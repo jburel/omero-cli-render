@@ -238,8 +238,7 @@ class RenderObject(object):
             self.zoomLevelScaling = image.getZoomLevelScaling()
 
         self.range = image.getPixelRange()
-        self.channels = map(lambda x: ChannelObject(x),
-                            image.getChannels(noRE=False))
+        self.channels = [ChannelObject(x) for x in image.getChannels(noRE=False)]
         self.model = image.isGreyscaleRenderingModel() and \
             'greyscale' or 'color'
         self.projection = image.getProjection()
@@ -446,7 +445,7 @@ class RenderControl(BaseControl):
                 continue
 
             rv = gateway.applySettingsToSet(src_img.id, "Image",
-                                            batch.keys())
+                                            list(batch.keys()))
             for missing in rv[False]:
                 self.ctx.err("Error: Image:%s" % missing)
                 del batch[missing]
@@ -455,7 +454,7 @@ class RenderControl(BaseControl):
                          % len(rv[True]))
 
             if not skipthumbs:
-                self._generate_thumbs(batch.values())
+                self._generate_thumbs(list(batch.values()))
 
     def update_channel_names(self, gateway, obj, namedict):
         for targets in self.render_images(gateway, obj):
@@ -484,7 +483,7 @@ class RenderControl(BaseControl):
         if 'channels' not in data:
             self.ctx.die(104, "ERROR: No channels found in %s" % args.channels)
 
-        for chindex, chdict in data['channels'].iteritems():
+        for chindex, chdict in data['channels'].items():
             try:
                 cindex = int(chindex)
             except Exception as e:
@@ -497,7 +496,7 @@ class RenderControl(BaseControl):
                 if (cobj.min is None) != (cobj.max is None):
                     raise Exception('Both or neither of min and max required')
                 newchannels[cindex] = cobj
-                print '%d:%s' % (cindex, cobj)
+                print('%d:%s' % (cindex, cobj))
             except Exception as e:
                 self.ctx.err('ERROR: %s' % e)
                 self.ctx.die(
@@ -505,7 +504,7 @@ class RenderControl(BaseControl):
 
         try:
             greyscale = data['greyscale']
-            print 'greyscale=%s' % data['greyscale']
+            print('greyscale=%s' % data['greyscale'])
         except KeyError:
             greyscale = None
 
@@ -513,7 +512,7 @@ class RenderControl(BaseControl):
         cindices = []
         rangelist = []
         colourlist = []
-        for (i, c) in newchannels.iteritems():
+        for (i, c) in newchannels.items():
             if c.label:
                 namedict[i] = c.label
             if c.active is False:
@@ -581,9 +580,9 @@ class RenderControl(BaseControl):
         rps = client.sf.createRawPixelsStore()
 
         try:
-            rps.setPixelsId(long(pixid), False, fail)
+            rps.setPixelsId(int(pixid), False, fail)
             msg = "ok:"
-        except Exception, e:
+        except Exception as e:
             error = e
             msg = "miss:"
 
@@ -591,12 +590,12 @@ class RenderControl(BaseControl):
             rps.close()
         else:
             try:
-                rps.setPixelsId(long(pixid), False, make)
+                rps.setPixelsId(int(pixid), False, make)
                 msg = "fill:"
             except KeyboardInterrupt:
                 msg = "cancel:"
                 pass
-            except Exception, e:
+            except Exception as e:
                 msg = "fail:"
                 error = e
             finally:
@@ -607,7 +606,7 @@ class RenderControl(BaseControl):
         elif thumb:
             tb = client.sf.createThumbnailStore()
             try:
-                tb.setPixelsId(long(pixid), ctx)
+                tb.setPixelsId(int(pixid), ctx)
                 tb.getThumbnailByLongestSide(rint(96), ctx)
             finally:
                 tb.close()

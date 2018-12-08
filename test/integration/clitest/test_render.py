@@ -137,7 +137,7 @@ class TestRender(CLITest):
             'max': 88,
         }
 
-        for k in xrange(sizec, 4):
+        for k in range(sizec, 4):
             del channels[k + 1]
         d = {'channels': channels}
 
@@ -214,7 +214,7 @@ class TestRender(CLITest):
             img = gw.getObject('Image', iid)
             channels = img.getChannels()
             assert len(channels) == sizec
-            for c in xrange(len(channels)):
+            for c in range(len(channels)):
                 self.assert_channel_rdef(channels[c], rd['channels'][c + 1])
             self.assert_image_rmodel(img, expected_greyscale)
             # img._closeRE()
@@ -248,7 +248,7 @@ class TestRender(CLITest):
             # the RenderingEngine but then Nones are returned later.
             channels = img.getChannels()
             assert len(channels) == sizec
-            for c in xrange(len(channels)):
+            for c in range(len(channels)):
                 self.assert_channel_rdef(channels[c], rd['channels'][c + 1])
             self.assert_image_rmodel(img, expected_greyscale)
             # img._closeRE()
